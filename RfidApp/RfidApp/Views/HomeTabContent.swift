@@ -12,6 +12,7 @@ struct HomeTabContent: View {
     @State private var products: [Product] = []
     @State private var serviceOrders: [ServiceOrder] = []
     @State private var isLoading = true
+    @State private var loadError: String?
     private let api = ApiClient.shared
 
     private var greetingName: String {
@@ -57,6 +58,22 @@ struct HomeTabContent: View {
                 }
                 .padding(.horizontal, AppTheme.Spacing.lg)
                 .padding(.top, AppTheme.Spacing.sm)
+
+                if let err = loadError {
+                    HStack(spacing: AppTheme.Spacing.sm) {
+                        Image(systemName: "exclamationmark.triangle.fill")
+                            .foregroundStyle(AppTheme.error)
+                        Text(err)
+                            .font(.system(size: AppTheme.FontSize.caption))
+                            .foregroundStyle(AppTheme.error)
+                    }
+                    .padding(AppTheme.Spacing.sm)
+                    .frame(maxWidth: .infinity)
+                    .background(AppTheme.error.opacity(0.1))
+                    .clipShape(RoundedRectangle(cornerRadius: AppTheme.Radius.sm))
+                    .padding(.horizontal, AppTheme.Spacing.lg)
+                    .padding(.top, AppTheme.Spacing.sm)
+                }
 
                 // Gráfico – visão do negócio (oculto no plano só WhatsApp)
                 if !botOnly {
@@ -256,6 +273,10 @@ struct HomeTabContent: View {
         .background(AppTheme.background)
         .navigationTitle("Início")
         .navigationBarTitleDisplayMode(.large)
+        .refreshable {
+            await loadTenantFeatures()
+            await loadDashboardData()
+        }
         .task {
             await loadTenantFeatures()
             await loadDashboardData()
@@ -264,6 +285,7 @@ struct HomeTabContent: View {
 
     private func loadDashboardData() async {
         isLoading = true
+        loadError = nil
         defer { isLoading = false }
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd"
@@ -272,6 +294,7 @@ struct HomeTabContent: View {
             dailyReport = try await api.getDailyReport(date: today)
         } catch {
             dailyReport = nil
+            if loadError == nil { loadError = error.localizedDescription }
         }
         let cal = Calendar.current
         if let start = cal.date(byAdding: .day, value: -6, to: Date()) {
@@ -281,12 +304,14 @@ struct HomeTabContent: View {
                 salesChartData = res.byDate ?? []
             } catch {
                 salesChartData = []
+                if loadError == nil { loadError = error.localizedDescription }
             }
         }
         do {
             products = try await api.getProducts()
         } catch {
             products = []
+            if loadError == nil { loadError = error.localizedDescription }
         }
         if tenantFeatures?.serviceOrders == true {
             do {

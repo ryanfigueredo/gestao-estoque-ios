@@ -59,6 +59,11 @@ final class AuthService: ObservableObject {
         setKeychain(key: keychainTokenKey, value: token)
         saveUserToKeychain(user)
         api.setAuthToken(token)
+        if let tid = user.tenantId, !tid.isEmpty {
+            api.setTenantId(tid)
+        } else {
+            api.setTenantId(nil)
+        }
         await MainActor.run {
             currentUser = user
             isLoggedIn = true
