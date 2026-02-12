@@ -113,7 +113,7 @@ struct SalesScreen: View {
         case "credit": return "Crédito"
         case "debit": return "Débito"
         case "pix": return "PIX"
-        case "fiado": return "Fiado"
+        case "fiado": return "Prazo"
         default: return pm
         }
     }

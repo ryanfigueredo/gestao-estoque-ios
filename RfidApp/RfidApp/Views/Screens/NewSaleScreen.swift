@@ -34,7 +34,7 @@ struct NewSaleScreen: View {
         ("cash", "Dinheiro"),
         ("debit", "Débito"),
         ("credit", "Crédito"),
-        ("fiado", "Fiado"),
+        ("fiado", "Prazo"),
     ]
 
     var body: some View {

@@ -15,7 +15,7 @@ struct ReportsScreen: View {
         "cash": "Dinheiro",
         "debit": "Débito",
         "credit": "Crédito",
-        "fiado": "Fiado",
+        "fiado": "Prazo",
         "outros": "Outros"
     ]
 

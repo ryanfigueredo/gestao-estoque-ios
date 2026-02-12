@@ -44,7 +44,7 @@ struct SaleDetailScreen: View {
             } else if let d = detail {
                 ScrollView {
                     VStack(spacing: AppTheme.Spacing.lg) {
-                        // Badges (NF-e, Fiado)
+                        // Badges (NF-e, Prazo)
                         badgesSection(d)
                         // Card cabeçalho
                         headerCard(d)
@@ -348,7 +348,7 @@ struct SaleDetailScreen: View {
         case "credit": return "Crédito"
         case "debit": return "Débito"
         case "pix": return "PIX"
-        case "fiado": return "Fiado"
+        case "fiado": return "Prazo"
         default: return pm
         }
     }
